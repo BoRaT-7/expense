@@ -1,0 +1,55 @@
+
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source "../views/**/*.blade.php";
+@source "../js/**/*.js";
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+}
+
+button, a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+@layer components {
+    .dashboard-card {
+        @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm;
+    }
+}
+@layer components {
+
+    /* Main page background */
+    .page-bg {
+        @apply bg-slate-50 dark:bg-slate-950;
+    }
+
+    /* Cards */
+    .card-bg {
+        @apply border border-slate-200 bg-white
+               dark:border-slate-700 dark:bg-slate-900;
+    }
+
+    /* Headings */
+    .heading-color {
+        @apply text-slate-900 dark:text-white;
+    }
+
+    /* Paragraph */
+    .text-muted {
+        @apply text-slate-600 dark:text-slate-400;
+    }
+
+    /* Input fields */
+    .input-field {
+        @apply border border-slate-300 bg-white text-slate-900
+               placeholder:text-slate-400
+               focus:border-blue-500 focus:outline-none
+               dark:border-slate-700 dark:bg-slate-800
+               dark:text-white dark:placeholder:text-slate-500;
+    }
+}
