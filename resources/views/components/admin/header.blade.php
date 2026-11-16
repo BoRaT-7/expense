@@ -1,244 +1,76 @@
 <header
-    class="sticky top-0 z-30 flex h-[82px] shrink-0 items-center gap-4 border-b border-slate-200 bg-white/95 px-4 backdrop-blur-xl md:px-7">
+    class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b border-slate-200 bg-white/90 px-3 shadow-sm shadow-slate-900/[0.03] backdrop-blur-xl sm:gap-4 sm:px-4 md:h-[82px] md:px-7 lg:shadow-none dark:border-slate-800 dark:bg-slate-900/90">
 
-    <!-- Sidebar Toggle -->
-    <button onclick="toggleSidebar()"
-        class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-700 hover:bg-slate-100">
+    <!-- Sidebar Toggle: Mobile & Tablet Only (sidebar is always visible on desktop) -->
+    <button type="button" onclick="toggleSidebar()" aria-controls="admin-sidebar"
+        aria-label="Open menu{{ $unreadNotificationCount ? ' ('.$unreadNotificationCount.' new notifications)' : '' }}"
+        class="group relative z-10 flex h-10 w-10 shrink-0 flex-col items-start justify-center gap-[5px] rounded-xl px-2.5 text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 active:scale-90 lg:hidden dark:text-slate-200 dark:hover:bg-slate-800">
 
-        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <span class="h-0.5 w-5 rounded-full bg-current transition-all duration-300"></span>
+        <span class="h-0.5 w-3 rounded-full bg-current transition-all duration-300 group-hover:w-5 group-active:w-5"></span>
+        <span class="h-0.5 w-4 rounded-full bg-current transition-all duration-300 group-hover:w-5 group-active:w-5"></span>
+
+        <!-- Unread indicator: Small devices only (notifications live in the menu there) -->
+        @if ($unreadNotificationCount > 0)
+            <span class="absolute right-1.5 top-1.5 flex h-2.5 w-2.5 md:hidden">
+                <span class="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 motion-safe:animate-ping"></span>
+                <span class="relative inline-flex h-2.5 w-2.5 rounded-full border-2 border-white bg-red-500 dark:border-slate-900"></span>
+            </span>
+        @endif
 
     </button>
 
 
-    <!-- Search -->
-    <div class="hidden w-full max-w-[560px] items-center gap-3 rounded-full bg-[#f1f3f9] px-5 py-3 md:flex">
+    <!-- Brand Name: Centered on Small Devices -->
+    @php
+        [$brandFirstWord, $brandRest] = array_pad(explode(' ', config('app.name'), 2), 2, '');
+    @endphp
+    <a href="{{ route('admin.dashboard') }}"
+        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap md:hidden">
+        <span class="block text-lg font-extrabold motion-safe:animate-header-title-in">
+            <span class="bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600 bg-[length:200%_auto] bg-clip-text text-transparent motion-safe:animate-gradient-pan dark:from-orange-400 dark:via-amber-300 dark:to-orange-400">{{ $brandFirstWord }}</span>
+            @if ($brandRest !== '')
+                <span class="text-[#1e3a6e] dark:text-blue-200">{{ $brandRest }}</span>
+            @endif
+        </span>
+    </a>
 
-        <svg class="h-5 w-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m16 16 4 4" />
-        </svg>
 
-        <input type="search" placeholder="Search expenses, categories..."
-            class="w-full bg-transparent text-sm outline-none">
-
+    <!-- Greeting: Tablet and up (based on Bangladesh time) -->
+    @php
+        $displayTimezone = config('app.display_timezone');
+        $localNow = now($displayTimezone);
+        [$greetingText, $greetingIcon] = match (true) {
+            $localNow->hour >= 5 && $localNow->hour < 12 => ['Good morning', '☀️'],
+            $localNow->hour >= 12 && $localNow->hour < 17 => ['Good afternoon', '🌤️'],
+            $localNow->hour >= 17 && $localNow->hour < 21 => ['Good evening', '🌇'],
+            default => ['Good night', '🌙'],
+        };
+    @endphp
+    <div id="header-greeting" data-timezone="{{ $displayTimezone }}" class="hidden min-w-0 md:block">
+        <p class="flex items-center gap-2 truncate text-lg font-bold tracking-tight text-slate-900 motion-safe:animate-header-title-in dark:text-white">
+            <span id="greeting-icon" aria-hidden="true" class="inline-block motion-safe:animate-float">{{ $greetingIcon }}</span>
+            <span><span id="greeting-text">{{ $greetingText }}</span>, <span class="text-blue-600 dark:text-blue-400">{{ Auth::user()->firstName() }}</span></span>
+        </p>
+        <p class="mt-0.5 flex items-center gap-1.5 truncate text-xs font-medium text-slate-500 motion-safe:animate-header-title-in motion-safe:[animation-delay:120ms] dark:text-slate-400">
+            <span class="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+                <span class="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 motion-safe:animate-ping"></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+            </span>
+            <time id="greeting-clock" datetime="{{ $localNow->toIso8601String() }}">{{ $localNow->format('l, d M Y · h:i A') }}</time>
+            <span class="text-slate-400 dark:text-slate-500">· {{ str_replace('_', ' ', Str::afterLast($displayTimezone, '/')) }}</span>
+        </p>
     </div>
 
 
     <!-- Right Actions -->
-    <div class="ml-auto flex items-center gap-4">
+    <div class="ml-auto flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">
 
-        <!-- Theme Toggle -->
-        @include('components.theme-toggle')
+        <!-- Theme Toggle & Notifications: Tablet and up (inside the menu on small devices) -->
+        <div class="hidden items-center gap-2 md:flex md:gap-3">
+            @include('components.theme-toggle')
 
-
-        <!-- Notification Dropdown -->
-        <div class="relative" id="notification-wrapper">
-
-            <!-- Notification Button -->
-            <button type="button" id="notification-button" aria-label="Notifications" aria-expanded="false"
-                aria-controls="notification-dropdown"
-                class="relative flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
-
-                <!-- Bell Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 00-4.5-5.8V4a1.5 1.5 0 00-3 0v1.2A6 6 0 006 11v3.2a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 01-6 0v-1m6 0H9" />
-                </svg>
-
-                <!-- Notification Count -->
-                <span id="notification-count"
-                    class="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[10px] font-bold text-white dark:border-slate-900">
-                    3
-                </span>
-
-            </button>
-
-
-            <!-- Notification Dropdown Panel -->
-            <div id="notification-dropdown"
-                class="absolute right-0 top-14 z-50 hidden w-[340px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900 sm:w-[380px]">
-
-                <!-- Header -->
-                <div
-                    class="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-700">
-
-                    <div>
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white">
-                            Notifications
-                        </h3>
-
-                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                            You have <span id="notification-total">3</span> unread notifications
-                        </p>
-                    </div>
-
-                    <button type="button" id="mark-all-read"
-                        class="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400">
-                        Mark all as read
-                    </button>
-
-                </div>
-
-
-                <!-- Notification List -->
-                <div id="notification-list" class="max-h-[360px] overflow-y-auto">
-
-                    <!-- Notification 1 -->
-                    <div class="notification-item flex gap-3 border-b border-slate-100 p-4 transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
-                        data-unread="true">
-
-                        <div
-                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
-
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-
-                        </div>
-
-                        <div class="min-w-0 flex-1">
-
-                            <div class="flex items-start justify-between gap-2">
-
-                                <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                                    Welcome to DeshExpense
-                                </h4>
-
-                                <span class="notification-dot mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-600"></span>
-
-                            </div>
-
-                            <p class="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
-                                Your expense management dashboard is ready.
-                            </p>
-
-                            <span class="mt-2 block text-[11px] text-slate-400">
-                                Just now
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Notification 2 -->
-                    <div class="notification-item flex gap-3 border-b border-slate-100 p-4 transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
-                        data-unread="true">
-
-                        <div
-                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400">
-
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
-
-                        </div>
-
-                        <div class="min-w-0 flex-1">
-
-                            <div class="flex items-start justify-between gap-2">
-
-                                <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                                    Expense Added
-                                </h4>
-
-                                <span class="notification-dot mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-600"></span>
-
-                            </div>
-
-                            <p class="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
-                                Your new expense has been recorded successfully.
-                            </p>
-
-                            <span class="mt-2 block text-[11px] text-slate-400">
-                                10 minutes ago
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Notification 3 -->
-                    <div class="notification-item flex gap-3 border-b border-slate-100 p-4 transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
-                        data-unread="true">
-
-                        <div
-                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
-
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-
-                        </div>
-
-                        <div class="min-w-0 flex-1">
-
-                            <div class="flex items-start justify-between gap-2">
-
-                                <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                                    Budget Reminder
-                                </h4>
-
-                                <span class="notification-dot mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-600"></span>
-
-                            </div>
-
-                            <p class="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
-                                Remember to review your monthly budget.
-                            </p>
-
-                            <span class="mt-2 block text-[11px] text-slate-400">
-                                1 hour ago
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Empty State -->
-                <div id="notification-empty" class="hidden px-5 py-10 text-center">
-
-                    <div
-                        class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-2xl dark:bg-slate-800">
-                        🔔
-                    </div>
-
-                    <h4 class="mt-4 font-semibold text-slate-800 dark:text-white">
-                        You're all caught up!
-                    </h4>
-
-                    <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                        No unread notifications available.
-                    </p>
-
-                </div>
-
-
-                <!-- Footer -->
-                <div class="border-t border-slate-100 p-3 text-center dark:border-slate-700">
-
-                    <a href="{{ url('/admin/notifications') }}"
-                        class="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400">
-                        View All Notifications →
-                    </a>
-
-                </div>
-
-            </div>
-
+            @include('components.admin.notifications')
         </div>
 
 
@@ -248,50 +80,54 @@
             <!-- Profile Button -->
             <button type="button" id="profile-button" aria-label="User profile" aria-expanded="false"
                 aria-controls="profile-dropdown"
-                class="flex items-center gap-3 rounded-xl p-1.5 transition hover:bg-slate-50 dark:hover:bg-slate-800">
+                class="flex items-center gap-2 rounded-xl p-1 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:gap-3 sm:p-1.5 dark:hover:bg-slate-800">
 
                 <!-- User Avatar -->
                 <div
-                    class="flex h-10 w-10 items-center justify-center rounded-full
-                    bg-gradient-to-br from-blue-100 to-violet-200
-                    text-lg font-bold text-blue-700 dark:from-blue-500/20 dark:to-violet-500/20 dark:text-blue-300">
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full
+                    bg-gradient-to-br from-blue-100 to-violet-200 ring-2 ring-white
+                    text-base font-bold text-blue-700 sm:h-10 sm:w-10 sm:text-lg dark:from-blue-500/20 dark:to-violet-500/20 dark:text-blue-300 dark:ring-slate-900">
 
                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
 
                 </div>
 
                 <!-- User Information -->
-                <div class="hidden text-left sm:block">
+                <div class="hidden max-w-[180px] text-left md:block">
 
-                    <p class="text-sm font-bold text-slate-900 dark:text-white">
+                    <p class="truncate text-sm font-bold text-slate-900 dark:text-white">
                         {{ Auth::user()->name }}
                     </p>
 
-                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                    <p class="truncate text-xs text-slate-500 dark:text-slate-400">
                         {{ Auth::user()->email }}
                     </p>
 
                 </div>
 
-                <span class="text-slate-500">⌄</span>
+                <svg class="hidden h-4 w-4 text-slate-400 sm:block" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
 
             </button>
 
 
             <!-- Profile Dropdown -->
             <div id="profile-dropdown"
-                class="absolute right-0 top-14 z-50 hidden w-64 overflow-hidden
+                class="fixed inset-x-3 top-[4.5rem] z-50 hidden origin-top-right overflow-hidden motion-safe:animate-dropdown-in
                 rounded-2xl border border-slate-200 bg-white shadow-xl
+                sm:absolute sm:inset-x-auto sm:right-0 sm:top-14 sm:w-64
                 dark:border-slate-700 dark:bg-slate-900">
 
                 <!-- Profile Details -->
                 <div class="border-b border-slate-100 p-4 dark:border-slate-700">
 
-                    <p class="font-bold text-slate-900 dark:text-white">
+                    <p class="truncate font-bold text-slate-900 dark:text-white">
                         {{ Auth::user()->name }}
                     </p>
 
-                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    <p class="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
                         {{ Auth::user()->email }}
                     </p>
 
@@ -313,7 +149,7 @@
                         <button type="submit"
                             class="flex w-full items-center gap-3 rounded-xl px-3 py-3
                             text-sm font-semibold text-red-600 transition
-                            hover:bg-red-50 dark:hover:bg-red-500/10">
+                            hover:bg-red-50 dark:hover:bg-red-500/10 dark:text-red-400">
 
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                 stroke-width="1.8">
@@ -344,14 +180,51 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
+        // Live Greeting & Clock (Bangladesh time, independent of the visitor's device timezone)
+        const greeting = document.getElementById('header-greeting');
+
+        if (greeting) {
+            const timeZone = greeting.dataset.timezone;
+            const greetingText = document.getElementById('greeting-text');
+            const greetingIcon = document.getElementById('greeting-icon');
+            const greetingClock = document.getElementById('greeting-clock');
+
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone, weekday: 'long', day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+            });
+            const partsOf = date => Object.fromEntries(
+                formatter.formatToParts(date).map(part => [part.type, part.value])
+            );
+
+            const periodFor = hour => {
+                if (hour >= 5 && hour < 12) return ['Good morning', '☀️'];
+                if (hour >= 12 && hour < 17) return ['Good afternoon', '🌤️'];
+                if (hour >= 17 && hour < 21) return ['Good evening', '🌇'];
+                return ['Good night', '🌙'];
+            };
+
+            const updateGreeting = () => {
+                const now = new Date();
+                const parts = partsOf(now);
+                const hour = Number(parts.hour) % 24;
+                const hour12 = String(hour % 12 || 12).padStart(2, '0');
+                const [text, icon] = periodFor(hour);
+
+                greetingText.textContent = text;
+                greetingIcon.textContent = icon;
+                greetingClock.textContent =
+                    `${parts.weekday}, ${parts.day} ${parts.month} ${parts.year} · ${hour12}:${parts.minute} ${hour < 12 ? 'AM' : 'PM'}`;
+                greetingClock.setAttribute('datetime', now.toISOString());
+            };
+
+            updateGreeting();
+            setInterval(updateGreeting, 30000);
+        }
+
         // Notification Elements
         const notificationButton = document.getElementById('notification-button');
         const notificationDropdown = document.getElementById('notification-dropdown');
-        const notificationCount = document.getElementById('notification-count');
-        const notificationTotal = document.getElementById('notification-total');
-        const markAllButton = document.getElementById('mark-all-read');
-        const emptyState = document.getElementById('notification-empty');
-        const notificationList = document.getElementById('notification-list');
         const notificationWrapper = document.getElementById('notification-wrapper');
 
         // Profile Elements
@@ -377,84 +250,41 @@
             });
 
 
-            // Update Notification Count
-            function updateNotificationCount() {
+            // Mark All Notifications as Read (persisted on the server)
+            const markAllButton = document.getElementById('mark-all-read');
+            const notificationCount = document.getElementById('notification-count');
+            const notificationUnreadLabel = document.getElementById('notification-unread-label');
 
-                if (!notificationList) return;
+            markAllButton?.addEventListener('click', async function() {
+                markAllButton.disabled = true;
 
-                const unreadItems = notificationList.querySelectorAll(
-                    '.notification-item[data-unread="true"]'
-                );
+                try {
+                    const response = await fetch(markAllButton.dataset.url, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
 
-                const unreadCount = unreadItems.length;
+                    if (!response.ok) {
+                        throw new Error('Request failed');
+                    }
 
-                notificationCount.textContent = unreadCount;
-                notificationTotal.textContent = unreadCount;
+                    notificationDropdown.querySelectorAll('.notification-item[data-unread="true"]').forEach(item => {
+                        item.dataset.unread = 'false';
+                        item.querySelector('.notification-dot')?.remove();
+                    });
 
-                notificationCount.classList.toggle('hidden', unreadCount === 0);
-
-                emptyState.classList.toggle('hidden', unreadCount > 0);
-
-                if (unreadCount === 0) {
-                    notificationList.classList.add('hidden');
-                    markAllButton.classList.add('hidden');
-                } else {
-                    notificationList.classList.remove('hidden');
-                    markAllButton.classList.remove('hidden');
+                    notificationCount?.remove();
+                    notificationButton.querySelector('.notification-ping')?.remove();
+                    notificationUnreadLabel.textContent = 'All caught up';
+                    markAllButton.remove();
+                } catch (error) {
+                    markAllButton.disabled = false;
                 }
-            }
-
-
-            // Mark Individual Notification as Read
-            if (notificationList) {
-
-                notificationList.querySelectorAll('.notification-item').forEach(item => {
-
-                    item.addEventListener('click', function() {
-
-                        item.dataset.unread = 'false';
-
-                        const dot = item.querySelector('.notification-dot');
-
-                        if (dot) {
-                            dot.classList.add('hidden');
-                        }
-
-                        item.classList.remove('bg-blue-50', 'dark:bg-slate-800');
-
-                        updateNotificationCount();
-
-                    });
-
-                });
-
-            }
-
-
-            // Mark All Notifications as Read
-            if (markAllButton) {
-
-                markAllButton.addEventListener('click', function() {
-
-                    notificationList.querySelectorAll('.notification-item').forEach(item => {
-
-                        item.dataset.unread = 'false';
-
-                        const dot = item.querySelector('.notification-dot');
-
-                        if (dot) {
-                            dot.classList.add('hidden');
-                        }
-
-                    });
-
-                    updateNotificationCount();
-
-                });
-
-            }
-
-            updateNotificationCount();
+            });
 
         }
 

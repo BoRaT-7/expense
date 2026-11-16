@@ -8,9 +8,9 @@
             'iconBg' => 'from-blue-50 to-cyan-100',
             'iconText' => 'text-blue-600',
             'glow' => 'bg-blue-500/30',
-            'cardBg' => 'to-blue-50/60',
+            'cardBg' => 'to-blue-50/60 dark:to-blue-500/10',
             'stroke' => '#2563eb',
-            'link' => 'bg-blue-50 text-blue-600',
+            'link' => 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400',
             'hover' => 'hover:shadow-blue-500/20',
         ],
         'green' => [
@@ -18,9 +18,9 @@
             'iconBg' => 'from-emerald-50 to-lime-100',
             'iconText' => 'text-emerald-600',
             'glow' => 'bg-emerald-500/30',
-            'cardBg' => 'to-emerald-50/60',
+            'cardBg' => 'to-emerald-50/60 dark:to-emerald-500/10',
             'stroke' => '#059669',
-            'link' => 'bg-emerald-50 text-emerald-600',
+            'link' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400',
             'hover' => 'hover:shadow-emerald-500/20',
         ],
         'orange' => [
@@ -28,9 +28,9 @@
             'iconBg' => 'from-orange-50 to-amber-100',
             'iconText' => 'text-orange-600',
             'glow' => 'bg-orange-500/30',
-            'cardBg' => 'to-orange-50/60',
+            'cardBg' => 'to-orange-50/60 dark:to-orange-500/10',
             'stroke' => '#ea580c',
-            'link' => 'bg-orange-50 text-orange-600',
+            'link' => 'bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400',
             'hover' => 'hover:shadow-orange-500/20',
         ],
         'purple' => [
@@ -38,9 +38,9 @@
             'iconBg' => 'from-violet-50 to-fuchsia-100',
             'iconText' => 'text-violet-600',
             'glow' => 'bg-violet-500/30',
-            'cardBg' => 'to-violet-50/60',
+            'cardBg' => 'to-violet-50/60 dark:to-violet-500/10',
             'stroke' => '#7c3aed',
-            'link' => 'bg-violet-50 text-violet-600',
+            'link' => 'bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400',
             'hover' => 'hover:shadow-violet-500/20',
         ],
     ];
@@ -53,7 +53,7 @@
 @endphp
 
 <div
-    class="group relative min-h-[80px] overflow-hidden rounded-3xl border border-white bg-gradient-to-br from-white {{ $t['cardBg'] }} p-5 shadow-[0_10px_30px_-12px_rgba(16,26,64,0.18)] ring-1 ring-slate-200/70 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl {{ $t['hover'] }}">
+    class="group relative min-h-[80px] overflow-hidden rounded-3xl border border-white bg-gradient-to-br from-white dark:border-slate-800 dark:from-slate-900 {{ $t['cardBg'] }} p-5 shadow-[0_10px_30px_-12px_rgba(16,26,64,0.18)] ring-1 ring-slate-200/70 dark:shadow-black/40 dark:ring-slate-700/70 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl {{ $t['hover'] }}">
 
     {{-- Soft corner glow --}}
     <div class="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full blur-3xl {{ $t['glow'] }}">
@@ -74,11 +74,11 @@
         </div>
 
         <div class="min-w-0">
-            <p class="truncate text-[12px] font-bold uppercase tracking-[0.12em] text-slate-500">
+            <p class="truncate text-[12px] font-bold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
                 {{ $title }}
             </p>
 
-            <h3 class="mt-1.5 truncate text-[28px] font-extrabold leading-none tracking-tight text-[#101a40]">
+            <h3 class="mt-1.5 truncate text-[28px] font-extrabold leading-none tracking-tight text-[#101a40] dark:text-white">
                 {{ $value }}
             </h3>
         </div>
@@ -89,11 +89,11 @@
 
         @if ($change !== null)
             <span
-                class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-bold {{ $isNegative ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600' }}">
+                class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-bold {{ $isNegative ? 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' }}">
                 {{ $isNegative ? '↓' : '↑' }} {{ $changeValue }}%
             </span>
 
-            <span class="text-slate-500">{{ $caption }}</span>
+            <span class="text-slate-500 dark:text-slate-400">{{ $caption }}</span>
         @else
             <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold {{ $t['link'] }}">
                 View Requests

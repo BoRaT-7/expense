@@ -3,143 +3,141 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Expense;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $stats = [
+        // Dashboard is shared: statistics cover all users' expenses.
+        $userExpenses = Expense::query();
 
+        // Date ranges.
+        $today = now()->toDateString();
+
+        $thisMonthStart = now()->startOfMonth()->toDateString();
+        $thisMonthEnd = now()->endOfMonth()->toDateString();
+
+        $lastMonth = now()->subMonthNoOverflow();
+
+        $lastMonthStart = $lastMonth->copy()->startOfMonth()->toDateString();
+        $lastMonthEnd = $lastMonth->copy()->endOfMonth()->toDateString();
+
+        // Dashboard statistics.
+        $stats = [
             [
                 'title' => 'Total Expenses',
-                'value' => '৳85,500',
+                'value' => '৳'.number_format((float) (clone $userExpenses)->sum('amount'), 2),
                 'icon' => '▣',
                 'tone' => 'blue',
-                'change' => 12,
             ],
-
             [
                 'title' => "Today's Expenses",
-                'value' => '৳2,350',
+                'value' => '৳'.number_format(
+                    (float) (clone $userExpenses)->whereDate('expense_date', $today)->sum('amount'),
+                    2
+                ),
                 'icon' => '☕',
                 'tone' => 'green',
-                'change' => 8,
-                'caption' => 'from yesterday',
             ],
-
             [
                 'title' => 'Pending Approvals',
-                'value' => '8',
+                'value' => (string) (clone $userExpenses)->where('status', 'pending')->count(),
                 'icon' => '◷',
                 'tone' => 'orange',
             ],
-
             [
                 'title' => 'Total Transactions',
-                'value' => '245',
+                'value' => (string) (clone $userExpenses)->count(),
                 'icon' => '♟',
                 'tone' => 'purple',
-                'change' => 15,
             ],
-
         ];
 
-        $transactions = [
-
-            [
-                'date' => 'Nov 2, 2026',
-                'description' => 'Tea and Coffee',
-                'category' => 'Food & Refreshments',
-                'amount' => '৳350',
-                'status' => 'Approved',
-                'icon' => '☕',
-            ],
-
-            [
-                'date' => 'Nov 1, 2026',
-                'description' => 'Web Hosting Renewal',
-                'category' => 'IT & Hosting',
-                'amount' => '৳4,000',
-                'status' => 'Approved',
-                'icon' => '▤',
-            ],
-
-            [
-                'date' => 'Oct 31, 2026',
-                'description' => 'Office Rent',
-                'category' => 'Rent',
-                'amount' => '৳25,000',
-                'status' => 'Approved',
-                'icon' => '⌂',
-            ],
-
-            [
-                'date' => 'Oct 30, 2026',
-                'description' => 'Travel to Client',
-                'category' => 'Travel',
-                'amount' => '৳3,500',
-                'status' => 'Pending',
-                'icon' => '✈',
-            ],
-
-            [
-                'date' => 'Oct 29, 2026',
-                'description' => 'Printer Ink',
-                'category' => 'Office Supplies',
-                'amount' => '৳1,200',
-                'status' => 'Approved',
+        // Latest five transactions.
+        $transactions = (clone $userExpenses)
+            ->latest('expense_date')
+            ->latest('id')
+            ->limit(5)
+            ->get()
+            ->map(fn (Expense $expense) => [
+                'date' => $expense->expense_date?->format('M j, Y') ?? 'N/A',
+                'description' => $expense->title,
+                'category' => $expense->category,
+                'amount' => '৳'.number_format((float) $expense->amount, 2),
+                'status' => ucfirst($expense->status),
                 'icon' => '▣',
-            ],
+            ]);
 
+        // Category chart data for the current month.
+        $colors = [
+            '#4F7DF3',
+            '#8B6CE8',
+            '#20B8A5',
+            '#F2B84B',
+            '#E8798B',
+            '#38A879',
+            '#F97316',
+            '#06B6D4',
         ];
 
-        $categories = [
-            [
-                'name' => 'Office Supplies',
-                'percent' => 30,
-                'color' => '#4F7DF3',
-            ],
-            [
-                'name' => 'Food & Drinks',
-                'percent' => 22,
-                'color' => '#8B6CE8',
-            ],
-            [
-                'name' => 'Transportation',
-                'percent' => 18,
-                'color' => '#20B8A5',
-            ],
-            [
-                'name' => 'Internet & Hosting',
-                'percent' => 15,
-                'color' => '#F2B84B',
-            ],
-            [
-                'name' => 'Utilities',
-                'percent' => 10,
-                'color' => '#E8798B',
-            ],
-            [
-                'name' => 'Marketing',
-                'percent' => 5,
-                'color' => '#38A879',
-            ],
-        ];
+        $categoryTotals = (clone $userExpenses)
+            ->whereBetween('expense_date', [$thisMonthStart, $thisMonthEnd])
+            ->select('category', DB::raw('SUM(amount) as total'))
+            ->groupBy('category')
+            ->orderByDesc('total')
+            ->get();
 
-        $departments = [
+        $categorySum = (float) $categoryTotals->sum('total');
 
-            ['name' => 'Development', 'percent' => 35, 'color' => '#2878f5'],
-            ['name' => 'Marketing', 'percent' => 28, 'color' => '#10b981'],
-            ['name' => 'HR', 'percent' => 20, 'color' => '#f9a825'],
-            ['name' => 'Admin', 'percent' => 17, 'color' => '#8b5cf6'],
+        $categories = $categoryTotals->values()->map(fn ($row, $index) => [
+            'name' => $row->category,
+            'amount' => (float) $row->total,
+            'percent' => $categorySum > 0
+                ? round(((float) $row->total / $categorySum) * 100, 1)
+                : 0,
+            'color' => $colors[$index % count($colors)],
+        ]);
 
-        ];
+        // Daily expense trends.
+        $currentMonthDays = now()->daysInMonth;
+        $lastMonthDays = $lastMonth->daysInMonth;
 
+        $trendThisMonth = (clone $userExpenses)
+            ->whereBetween('expense_date', [$thisMonthStart, $thisMonthEnd])
+            ->selectRaw('DAY(expense_date) as day, SUM(amount) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
+        $trendLastMonth = (clone $userExpenses)
+            ->whereBetween('expense_date', [$lastMonthStart, $lastMonthEnd])
+            ->selectRaw('DAY(expense_date) as day, SUM(amount) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
+        $trendTotalThis = (float) $trendThisMonth->sum();
+        $trendTotalLast = (float) $trendLastMonth->sum();
+
+        $trendThisMonth = collect(range(1, $currentMonthDays))
+            ->map(fn ($day) => (float) ($trendThisMonth[$day] ?? 0));
+
+        $trendLastMonth = collect(range(1, $lastMonthDays))
+            ->map(fn ($day) => (float) ($trendLastMonth[$day] ?? 0));
+
+        $trendLabels = collect(range(1, $currentMonthDays))
+            ->map(fn ($day) => (string) $day);
+
+        // Return dashboard data.
         return view('admin.dashboard.index', compact(
             'stats',
             'transactions',
             'categories',
-            'departments'
+            'trendLabels',
+            'trendThisMonth',
+            'trendLastMonth',
+            'trendTotalThis',
+            'trendTotalLast'
         ));
     }
 }

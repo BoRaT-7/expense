@@ -4,6 +4,95 @@
 
 @source "../views/**/*.blade.php";
 @source "../js/**/*.js";
+
+/* Header & dropdown motion */
+@theme {
+    /* Brand surfaces */
+    --color-page: #f3f6ff;
+    --color-sidebar: #14213d;
+    --color-sidebar-deep: #0e1830;
+
+    --animate-header-title-in: header-title-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-dropdown-in: dropdown-in 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    --animate-gradient-pan: gradient-pan 6s ease-in-out infinite;
+    --animate-nav-item-in: nav-item-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-float: float 3.5s ease-in-out infinite;
+    --animate-bell-ring: bell-ring 900ms ease-in-out;
+
+    @keyframes nav-item-in {
+        from {
+            opacity: 0;
+            transform: translateX(-14px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-3px) rotate(-6deg);
+        }
+    }
+
+    @keyframes bell-ring {
+        0%, 100% {
+            transform: rotate(0deg);
+        }
+        15% {
+            transform: rotate(14deg);
+        }
+        30% {
+            transform: rotate(-12deg);
+        }
+        45% {
+            transform: rotate(8deg);
+        }
+        60% {
+            transform: rotate(-5deg);
+        }
+        75% {
+            transform: rotate(2deg);
+        }
+    }
+
+    @keyframes header-title-in {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+            letter-spacing: 0.08em;
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+            letter-spacing: -0.01em;
+        }
+    }
+
+    @keyframes dropdown-in {
+        from {
+            opacity: 0;
+            transform: translateY(-6px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes gradient-pan {
+        0%, 100% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+    }
+}
 html {
     scroll-behavior: smooth;
 }
@@ -12,13 +101,75 @@ body {
     margin: 0;
 }
 
+/* Native controls (date pickers, selects, scrollbars) follow the theme */
+html {
+    color-scheme: light;
+}
+
+html.dark {
+    color-scheme: dark;
+}
+
+html.dark select option {
+    background-color: var(--color-slate-800);
+    color: var(--color-slate-100);
+}
+
 button, a {
     -webkit-tap-highlight-color: transparent;
 }
 
 @layer components {
+
+    /* Sidebar navigation link */
+    .sidebar-link {
+        @apply relative flex items-center gap-3.5 rounded-xl px-4 py-3 text-sm font-medium text-slate-300
+               transition-colors duration-200 hover:bg-white/[0.06] hover:text-white
+               lg:rounded-l-full lg:rounded-r-none;
+    }
+
+    /* Active link: takes the page colour so it flows into the content area */
+    .sidebar-link-active {
+        --tab-bg: var(--color-page);
+        @apply bg-page font-semibold text-blue-600 shadow-sm hover:bg-page hover:text-blue-600
+               lg:shadow-none
+               dark:bg-slate-950 dark:text-blue-400 dark:hover:bg-slate-950 dark:hover:text-blue-400;
+    }
+
+    .dark .sidebar-link-active {
+        --tab-bg: var(--color-slate-950);
+    }
+
+    /* Curved "connected tab" corners above and below the active link (desktop only) */
+    @media (width >= 64rem) {
+        .sidebar-link-active::before,
+        .sidebar-link-active::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+
+        .sidebar-link-active::before {
+            top: -20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 6px 6px 0 6px var(--tab-bg);
+        }
+
+        .sidebar-link-active::after {
+            bottom: -20px;
+            border-top-right-radius: 20px;
+            box-shadow: 6px -6px 0 6px var(--tab-bg);
+        }
+    }
+}
+
+@layer components {
     .dashboard-card {
-        @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm;
+        @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm
+               dark:border-slate-700 dark:bg-slate-900;
     }
 }
 @layer components {

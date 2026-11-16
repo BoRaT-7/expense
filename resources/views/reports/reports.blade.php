@@ -4,6 +4,20 @@
 
 @section('content')
 
+    @php
+        $expenseData = $expenses->map(function ($expense) {
+            return [
+                'title' => $expense->title,
+                'id' => $expense->id,
+                'category' => $expense->category,
+                'date' => $expense->expense_date->toDateString(),
+                'payment' => $expense->payment_method ?? '',
+                'amount' => (float) $expense->amount,
+                'receipt' => $expense->receiptUrl() ?? '',
+            ];
+        })->values();
+    @endphp
+
     <div class="mx-auto max-w-7xl space-y-7">
 
         {{-- Page Header --}}
@@ -11,18 +25,18 @@
 
             <div>
                 <div class="mb-3 flex items-center gap-2 text-sm text-slate-400">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600">
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600 dark:hover:text-blue-400">
                         Dashboard
                     </a>
                     <span>/</span>
-                    <span class="font-semibold text-blue-600">Reports</span>
+                    <span class="font-semibold text-blue-600 dark:text-blue-400">Reports</span>
                 </div>
 
-                <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 md:text-3xl">
+                <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 md:text-3xl dark:text-slate-100">
                     Expense Reports
                 </h1>
 
-                <p class="mt-2 text-sm text-slate-500">
+                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
                     Analyze your expenses and monitor your financial activities.
                 </p>
             </div>
@@ -30,7 +44,7 @@
             <div class="flex flex-wrap gap-3">
 
                 {{-- <button type="button" onclick="window.print()"
-                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50">
+                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800">
                     <span>⎙</span>
                     Print Report
                 </button> --}}
@@ -51,15 +65,15 @@
 
             {{-- Total Expense --}}
             <div
-                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg">
+                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:hover:border-blue-500/40">
 
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Total Expenses
                         </p>
 
-                        <h3 id="totalExpense" class="mt-3 text-2xl font-bold tracking-tight text-slate-800">
+                        <h3 id="totalExpense" class="mt-3 text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
                             ৳ 0
                         </h3>
 
@@ -69,7 +83,7 @@
                     </div>
 
                     <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl font-semibold text-blue-600 transition-colors duration-300 group-hover:bg-blue-600 group-hover:text-white">
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl font-semibold text-blue-600 transition-colors duration-300 group-hover:bg-blue-600 group-hover:text-white dark:bg-blue-500/10 dark:text-blue-400">
                         ৳
                     </div>
                 </div>
@@ -80,15 +94,15 @@
 
             {{-- Total Transactions --}}
             <div
-                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg">
+                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:hover:border-violet-500/40">
 
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Total Transactions
                         </p>
 
-                        <h3 id="totalTransactions" class="mt-3 text-2xl font-bold tracking-tight text-slate-800">
+                        <h3 id="totalTransactions" class="mt-3 text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
                             0
                         </h3>
 
@@ -98,7 +112,7 @@
                     </div>
 
                     <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 text-2xl text-violet-600 transition-colors duration-300 group-hover:bg-violet-600 group-hover:text-white">
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 text-2xl text-violet-600 transition-colors duration-300 group-hover:bg-violet-600 group-hover:text-white dark:bg-violet-500/10 dark:text-violet-400">
                         ▤
                     </div>
                 </div>
@@ -109,15 +123,15 @@
 
             {{-- Average Expense --}}
             <div
-                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-200 hover:shadow-lg">
+                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-200 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:hover:border-amber-500/40">
 
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Average Expense
                         </p>
 
-                        <h3 id="averageExpense" class="mt-3 text-2xl font-bold tracking-tight text-slate-800">
+                        <h3 id="averageExpense" class="mt-3 text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
                             ৳ 0
                         </h3>
 
@@ -127,7 +141,7 @@
                     </div>
 
                     <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-2xl text-amber-600 transition-colors duration-300 group-hover:bg-amber-500 group-hover:text-white">
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-2xl text-amber-600 transition-colors duration-300 group-hover:bg-amber-500 group-hover:text-white dark:bg-amber-500/10 dark:text-amber-400">
                         ↗
                     </div>
                 </div>
@@ -138,15 +152,15 @@
 
             {{-- Highest Expense --}}
             <div
-                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-lg">
+                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:hover:border-red-500/40">
 
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Highest Expense
                         </p>
 
-                        <h3 id="highestExpense" class="mt-3 text-2xl font-bold tracking-tight text-slate-800">
+                        <h3 id="highestExpense" class="mt-3 text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
                             ৳ 0
                         </h3>
 
@@ -156,7 +170,7 @@
                     </div>
 
                     <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-2xl text-red-500 transition-colors duration-300 group-hover:bg-red-500 group-hover:text-white">
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-2xl text-red-500 transition-colors duration-300 group-hover:bg-red-500 group-hover:text-white dark:bg-red-500/10">
                         ↑
                     </div>
                 </div>
@@ -168,10 +182,10 @@
 
 
         {{-- Report Filters --}}
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
 
             <div class="mb-4">
-                <h2 class="font-bold text-slate-800">
+                <h2 class="font-bold text-slate-800 dark:text-slate-100">
                     Report Filters
                 </h2>
 
@@ -184,46 +198,44 @@
 
                 {{-- Start Date --}}
                 <div>
-                    <label for="startDate" class="mb-2 block text-xs font-semibold text-slate-600">
+                    <label for="startDate" class="mb-2 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                         Start Date
                     </label>
 
-                    <input type="date" id="startDate" value="2026-11-01"
-                        class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10">
+                    <input type="date" id="startDate"
+                        class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:focus:bg-slate-900">
                 </div>
 
                 {{-- End Date --}}
                 <div>
-                    <label for="endDate" class="mb-2 block text-xs font-semibold text-slate-600">
+                    <label for="endDate" class="mb-2 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                         End Date
                     </label>
 
-                    <input type="date" id="endDate" value="2026-11-30"
-                        class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10">
+                    <input type="date" id="endDate"
+                        class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:focus:bg-slate-900">
                 </div>
 
                 {{-- Category --}}
                 <div>
-                    <label for="reportCategory" class="mb-2 block text-xs font-semibold text-slate-600">
+                    <label for="reportCategory" class="mb-2 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                         Category
                     </label>
 
                     <select id="reportCategory"
-                        class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10">
+                        class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:focus:bg-slate-900">
 
                         <option value="">All Categories</option>
-                        <option value="Office Supplies">Office Supplies</option>
-                        <option value="Food & Drinks">Food & Drinks</option>
-                        <option value="Transportation">Transportation</option>
-                        <option value="Internet & Hosting">Internet & Hosting</option>
-                        <option value="Utilities">Utilities</option>
+                        @foreach ($expenses->pluck('category')->unique()->sort() as $category)
+                            <option value="{{ $category }}">{{ $category }}</option>
+                        @endforeach
 
                     </select>
                 </div>
 
                 {{-- Search --}}
                 <div>
-                    <label for="reportSearch" class="mb-2 block text-xs font-semibold text-slate-600">
+                    <label for="reportSearch" class="mb-2 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                         Search Expense
                     </label>
 
@@ -236,13 +248,13 @@
                         </svg>
 
                         <input type="search" id="reportSearch" placeholder="Search expense..."
-                            class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10">
+                            class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-900">
                     </div>
                 </div>
 
                 {{-- Apply Filters --}}
                 <button type="button" onclick="applyReportFilters()"
-                    class="h-[46px] rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition duration-200 hover:bg-blue-600 hover:shadow-md hover:shadow-blue-500/20 active:scale-95">
+                    class="h-[46px] rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition duration-200 hover:bg-blue-600 hover:shadow-md hover:shadow-blue-500/20 active:scale-95 dark:bg-slate-700">
                     Apply Filters
                 </button>
 
@@ -252,13 +264,13 @@
 
 
         {{-- Expense Details Table --}}
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
 
             <div
-                class="flex flex-col justify-between gap-3 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:px-6">
+                class="flex flex-col justify-between gap-3 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:px-6 dark:border-slate-800">
 
                 <div>
-                    <h2 class="font-bold text-slate-800">
+                    <h2 class="font-bold text-slate-800 dark:text-slate-100">
                         Expense Report Details
                     </h2>
 
@@ -274,156 +286,41 @@
 
                 <table class="w-full min-w-[750px] text-left">
 
-                    <thead class="bg-slate-50">
+                    <thead class="bg-slate-50 dark:bg-slate-800">
 
-                        <tr class="text-sm font-exbold uppercase tracking-wider text-black">
+                        <tr class="text-sm font-exbold uppercase tracking-wider text-black dark:text-slate-200">
 
                             <th class="px-6 py-4">Expense Title</th>
                             <th class="px-6 py-4">Category</th>
                             <th class="px-6 py-4">Date</th>
                             <th class="px-6 py-4">Payment Method</th>
                             <th class="px-6 py-4">Amount</th>
+                            <th class="px-6 py-4 text-center">Receipt</th>
 
                         </tr>
 
                     </thead>
 
-                    <tbody id="reportTableBody" class="divide-y divide-slate-100 text-sm">
+                    <tbody id="reportTableBody" class="divide-y divide-slate-100 text-sm dark:divide-slate-800">
 
-                        <tr class="report-row hover:bg-slate-50" data-title="Office Supplies"
-                            data-category="Office Supplies" data-date="2026-11-03" data-payment="Cash"
-                            data-amount="2500">
-
-                            <td class="px-6 py-5 font-semibold text-slate-800">
-                                Office Supplies
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Office Supplies
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                03 Nov 2026
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Cash
-                            </td>
-
-                            <td class="px-6 py-5 font-bold text-slate-800">
-                                ৳ 2,500
-                            </td>
-
-                        </tr>
-
-
-                        <tr class="report-row hover:bg-slate-50" data-title="Internet Bill"
-                            data-category="Internet & Hosting" data-date="2026-11-02" data-payment="Mobile Banking"
-                            data-amount="1200">
-
-                            <td class="px-6 py-5 font-semibold text-slate-800">
-                                Internet Bill
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Internet & Hosting
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                02 Nov 2026
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Mobile Banking
-                            </td>
-
-                            <td class="px-6 py-5 font-bold text-slate-800">
-                                ৳ 1,200
-                            </td>
-
-                        </tr>
-
-
-                        <tr class="report-row hover:bg-slate-50" data-title="Team Lunch" data-category="Food & Drinks"
-                            data-date="2026-11-01" data-payment="Cash" data-amount="3500">
-
-                            <td class="px-6 py-5 font-semibold text-slate-800">
-                                Team Lunch
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Food & Drinks
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                01 Nov 2026
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Cash
-                            </td>
-
-                            <td class="px-6 py-5 font-bold text-slate-800">
-                                ৳ 3,500
-                            </td>
-
-                        </tr>
-
-
-                        <tr class="report-row hover:bg-slate-50" data-title="Electricity Bill" data-category="Utilities"
-                            data-date="2026-10-29" data-payment="Bank Transfer" data-amount="4800">
-
-                            <td class="px-6 py-5 font-semibold text-slate-800">
-                                Electricity Bill
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Utilities
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                29 Oct 2026
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Bank Transfer
-                            </td>
-
-                            <td class="px-6 py-5 font-bold text-slate-800">
-                                ৳ 4,800
-                            </td>
-
-                        </tr>
-
-
-                        <tr class="report-row hover:bg-slate-50" data-title="Transportation"
-                            data-category="Transportation" data-date="2026-10-25" data-payment="Cash" data-amount="800">
-
-                            <td class="px-6 py-5 font-semibold text-slate-800">
-                                Transportation
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Transportation
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                25 Oct 2026
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Cash
-                            </td>
-
-                            <td class="px-6 py-5 font-bold text-slate-800">
-                                ৳ 800
-                            </td>
-
-                        </tr>
+                        @forelse ($expenses as $expense)
+                            <tr class="report-row hover:bg-slate-50 dark:hover:bg-slate-800" data-expense-id="{{ $expense->id }}" data-title="{{ $expense->title }}"
+                                data-category="{{ $expense->category }}" data-date="{{ $expense->expense_date->toDateString() }}"
+                                data-payment="{{ $expense->payment_method ?? '' }}" data-amount="{{ $expense->amount }}">
+                                <td class="px-6 py-5 font-semibold text-slate-800 dark:text-slate-100">{{ $expense->title }}</td>
+                                <td class="px-6 py-5 text-slate-600 dark:text-slate-300">{{ $expense->category }}</td>
+                                <td class="px-6 py-5 text-slate-600 dark:text-slate-300">{{ $expense->expense_date->format('d M Y') }}</td>
+                                <td class="px-6 py-5 text-slate-600 dark:text-slate-300">{{ $expense->payment_method ?: '—' }}</td>
+                                <td class="px-6 py-5 font-bold text-slate-800 dark:text-slate-100">৳ {{ number_format((float) $expense->amount, 2) }}</td>
+                                <td class="px-6 py-3 text-center">@include('components.admin.receipt-thumbnail')</td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="6" class="px-6 py-12 text-center text-slate-400">No expenses have been added yet.</td></tr>
+                        @endforelse
 
 
                         <tr id="noReportResults" class="hidden">
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-400">
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-400">
                                 No matching report records found.
                             </td>
                         </tr>
@@ -436,23 +333,23 @@
 
             {{-- Table Footer & Pagination --}}
             <div
-                class="flex flex-col justify-between gap-4 border-t border-slate-100 px-6 py-4 sm:flex-row sm:items-center">
+                class="flex flex-col justify-between gap-4 border-t border-slate-100 px-6 py-4 sm:flex-row sm:items-center dark:border-slate-800">
 
-                <p id="reportCount" class="text-xs text-slate-500">
+                <p id="reportCount" class="text-xs text-slate-500 dark:text-slate-400">
                     Showing 0 of 0 records
                 </p>
 
                 <div id="reportPagination" class="flex items-center justify-end gap-2">
 
                     <button type="button" id="prevPage"
-                        class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">
+                        class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
                         Previous
                     </button>
 
                     <div id="pageNumbers" class="flex items-center gap-1"></div>
 
                     <button type="button" id="nextPage"
-                        class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">
+                        class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
                         Next
                     </button>
 
@@ -464,55 +361,21 @@
 
     </div>
 
+    @include('components.admin.receipt-modal')
+
 @endsection
 
 
 {{-- Report Scripts --}}
 @push('scripts')
     <script>
-        // Sample Expense Data
-        const expenseData = [{
-                title: 'Office Supplies',
-                category: 'Office Supplies',
-                date: '2026-11-03',
-                payment: 'Cash',
-                amount: 2500
-            },
-            {
-                title: 'Internet Bill',
-                category: 'Internet & Hosting',
-                date: '2026-11-02',
-                payment: 'Mobile Banking',
-                amount: 1200
-            },
-            {
-                title: 'Team Lunch',
-                category: 'Food & Drinks',
-                date: '2026-11-01',
-                payment: 'Cash',
-                amount: 3500
-            },
-            {
-                title: 'Electricity Bill',
-                category: 'Utilities',
-                date: '2026-10-29',
-                payment: 'Bank Transfer',
-                amount: 4800
-            },
-            {
-                title: 'Transportation',
-                category: 'Transportation',
-                date: '2026-10-25',
-                payment: 'Cash',
-                amount: 800
-            }
-        ];
+        const expenseData = @json($expenseData);
 
         let filteredData = [...expenseData];
 
         // Pagination Settings
         let currentPage = 1;
-        const recordsPerPage = 5;
+        const recordsPerPage = 30;
 
         const money = amount =>
             '৳ ' + Number(amount).toLocaleString('en-BD');
@@ -606,10 +469,7 @@
             // Show only current page records
             rows.forEach(row => {
 
-                const exists = currentRecords.some(item =>
-                    item.title === row.dataset.title &&
-                    item.date === row.dataset.date
-                );
+                const exists = currentRecords.some(item => String(item.id) === row.dataset.expenseId);
 
                 row.classList.toggle('hidden', !exists);
 
@@ -639,7 +499,7 @@
 
                 button.className = page === currentPage ?
                     'h-9 min-w-9 rounded-lg bg-blue-600 px-3 text-sm font-semibold text-white' :
-                    'h-9 min-w-9 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50';
+                    'h-9 min-w-9 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800';
 
                 button.addEventListener('click', function() {
 
@@ -761,7 +621,8 @@
                 'Category',
                 'Date',
                 'Payment Method',
-                'Amount (BDT)'
+                'Amount (BDT)',
+                'Receipt URL'
             ];
 
             const rows = data.map(item => [
@@ -769,7 +630,8 @@
                 item.category,
                 item.date,
                 item.payment,
-                item.amount
+                item.amount,
+                item.receipt
             ]);
 
             const escapeXml = value => String(value)
@@ -812,7 +674,7 @@
             const link = document.createElement('a');
 
             link.href = url;
-            link.download = 'deshexpense-report.xls';
+            link.download = 'expense-tracker-report.xls';
 
             document.body.appendChild(link);
 

@@ -11,18 +11,18 @@
 
             <div>
                 <div class="mb-3 flex items-center gap-2 text-sm text-slate-400">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600">
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600 dark:hover:text-blue-400">
                         Dashboard
                     </a>
                     <span>/</span>
-                    <span class="font-semibold text-blue-600">All Expenses</span>
+                    <span class="font-semibold text-blue-600 dark:text-blue-400">All Expenses</span>
                 </div>
 
-                <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 md:text-3xl">
+                <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 md:text-3xl dark:text-slate-100">
                     All Expenses
                 </h1>
 
-                <p class="mt-2 text-sm text-slate-500">
+                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
                     Track, organize and manage all your business expenses.
                 </p>
             </div>
@@ -42,22 +42,22 @@
 
             {{-- Total Expenses --}}
             <div
-                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg">
+                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:hover:border-blue-500/40">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Total Expenses
                         </p>
-                        <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-800">
-                            ৳ 45,850
+                        <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+                            ৳ {{ number_format((float) $expenses->sum('amount'), 2) }}
                         </h3>
                         <p class="mt-2 text-xs font-medium text-slate-400">
-                            Sample overview
+                            Total of saved expenses
                         </p>
                     </div>
 
                     <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl font-semibold text-blue-600 transition-colors duration-300 group-hover:bg-blue-600 group-hover:text-white">
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl font-semibold text-blue-600 transition-colors duration-300 group-hover:bg-blue-600 group-hover:text-white dark:bg-blue-500/10 dark:text-blue-400">
                         ৳
                     </div>
                 </div>
@@ -67,22 +67,22 @@
 
             {{-- This Month --}}
             <div
-                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg">
+                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:hover:border-violet-500/40">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
                             This Month
                         </p>
-                        <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-800">
-                            ৳ 18,500
+                        <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+                            ৳ {{ number_format((float) $expenses->filter(fn ($expense) => $expense->expense_date->isCurrentMonth())->sum('amount'), 2) }}
                         </h3>
                         <p class="mt-2 text-xs font-medium text-slate-400">
-                            Monthly overview
+                            Current month total
                         </p>
                     </div>
 
                     <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 text-2xl text-violet-600 transition-colors duration-300 group-hover:bg-violet-600 group-hover:text-white">
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50 text-2xl text-violet-600 transition-colors duration-300 group-hover:bg-violet-600 group-hover:text-white dark:bg-violet-500/10 dark:text-violet-400">
                         ▤
                     </div>
                 </div>
@@ -92,14 +92,14 @@
 
             {{-- Total Records --}}
             <div
-                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-lg">
+                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:hover:border-emerald-500/40">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Total Records
                         </p>
-                        <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-800">
-                            24
+                        <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+                            {{ $expenses->count() }}
                         </h3>
                         <p class="mt-2 text-xs font-medium text-slate-400">
                             Recorded expenses
@@ -107,7 +107,7 @@
                     </div>
 
                     <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-2xl text-emerald-600 transition-colors duration-300 group-hover:bg-emerald-600 group-hover:text-white">
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-2xl text-emerald-600 transition-colors duration-300 group-hover:bg-emerald-600 group-hover:text-white dark:bg-emerald-500/10 dark:text-emerald-400">
                         ▣
                     </div>
                 </div>
@@ -117,22 +117,22 @@
 
             {{-- Average Expense --}}
             <div
-                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-200 hover:shadow-lg">
+                class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-amber-200 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:hover:border-amber-500/40">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm font-medium text-slate-500">
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Average Expense
                         </p>
-                        <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-800">
-                            ৳ 1,910
+                        <h3 class="mt-3 text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+                            ৳ {{ number_format((float) ($expenses->count() ? $expenses->sum('amount') / $expenses->count() : 0), 2) }}
                         </h3>
                         <p class="mt-2 text-xs font-medium text-slate-400">
-                            Per expense record
+                            Average saved expense
                         </p>
                     </div>
 
                     <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-2xl text-amber-600 transition-colors duration-300 group-hover:bg-amber-500 group-hover:text-white">
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-2xl text-amber-600 transition-colors duration-300 group-hover:bg-amber-500 group-hover:text-white dark:bg-amber-500/10 dark:text-amber-400">
                         ↗
                     </div>
                 </div>
@@ -145,14 +145,14 @@
 
 
         {{-- Expenses Table Card --}}
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
 
             {{-- Table Header --}}
             <div
-                class="flex flex-col justify-between gap-4 border-b border-slate-100 p-5 md:flex-row md:items-center md:px-6">
+                class="flex flex-col justify-between gap-4 border-b border-slate-100 p-5 md:flex-row md:items-center md:px-6 dark:border-slate-800">
 
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">
                         Expense Records
                     </h2>
 
@@ -162,7 +162,7 @@
                 </div>
                 {{--
                 <button type="button" onclick="alert('Export functionality will be added later.')"
-                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800">
 
                     <span>↓</span>
                     Export Report
@@ -175,7 +175,7 @@
 
 
             {{-- Report Filters --}}
-            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
 
 
 
@@ -184,46 +184,44 @@
 
                     {{-- Start Date --}}
                     <div>
-                        <label for="startDate" class="mb-2 block text-xs font-semibold text-slate-600">
+                        <label for="startDate" class="mb-2 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                             Start Date
                         </label>
 
-                        <input type="date" id="startDate" value="2026-11-01"
-                            class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10">
+                        <input type="date" id="startDate"
+                            class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:focus:bg-slate-900">
                     </div>
 
                     {{-- End Date --}}
                     <div>
-                        <label for="endDate" class="mb-2 block text-xs font-semibold text-slate-600">
+                        <label for="endDate" class="mb-2 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                             End Date
                         </label>
 
-                        <input type="date" id="endDate" value="2026-11-30"
-                            class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10">
+                        <input type="date" id="endDate"
+                            class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:focus:bg-slate-900">
                     </div>
 
                     {{-- Category --}}
                     <div>
-                        <label for="reportCategory" class="mb-2 block text-xs font-semibold text-slate-600">
+                        <label for="reportCategory" class="mb-2 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                             Category
                         </label>
 
                         <select id="reportCategory"
-                            class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10">
+                            class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-600 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:focus:bg-slate-900">
 
-                            <option value="">All Categories</option>
-                            <option value="Office Supplies">Office Supplies</option>
-                            <option value="Food & Drinks">Food & Drinks</option>
-                            <option value="Transportation">Transportation</option>
-                            <option value="Internet & Hosting">Internet & Hosting</option>
-                            <option value="Utilities">Utilities</option>
+                        <option value="">All Categories</option>
+                        @foreach ($expenses->pluck('category')->unique()->sort() as $category)
+                            <option value="{{ $category }}">{{ $category }}</option>
+                        @endforeach
 
                         </select>
                     </div>
 
                     {{-- Search --}}
                     <div>
-                        <label for="reportSearch" class="mb-2 block text-xs font-semibold text-slate-600">
+                        <label for="reportSearch" class="mb-2 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                             Search Expense
                         </label>
 
@@ -236,13 +234,13 @@
                             </svg>
 
                             <input type="search" id="reportSearch" placeholder="Search expense..."
-                                class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10">
+                                class="h-[46px] w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-900">
                         </div>
                     </div>
 
                     {{-- Apply Filters --}}
                     <button type="button" onclick="applyReportFilters()"
-                        class="h-[46px] rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition duration-200 hover:bg-blue-600 hover:shadow-md hover:shadow-blue-500/20 active:scale-95">
+                        class="h-[46px] rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition duration-200 hover:bg-blue-600 hover:shadow-md hover:shadow-blue-500/20 active:scale-95 dark:bg-slate-700">
                         Apply Filters
                     </button>
 
@@ -256,17 +254,18 @@
             {{-- Responsive Table --}}
             <div class="overflow-x-auto">
 
-                <table class="w-full min-w-[850px] text-left">
+                <table class="w-full min-w-[950px] text-left">
 
-                    <thead class="bg-slate-50">
+                    <thead class="bg-slate-50 dark:bg-slate-800">
 
-                        <tr class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                        <tr class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
 
                             <th class="px-6 py-4">Expense Details</th>
                             <th class="px-6 py-4">Category</th>
                             <th class="px-6 py-4">Date</th>
                             <th class="px-6 py-4">Payment</th>
                             <th class="px-6 py-4">Amount</th>
+                            <th class="px-6 py-4 text-center">Receipt</th>
                             <th class="px-6 py-4 text-center">Actions</th>
 
                         </tr>
@@ -274,290 +273,37 @@
                     </thead>
 
 
-                    <tbody id="expenseTableBody" class="divide-y divide-slate-100 text-sm">
-
-                        {{-- Expense 1 --}}
-                        <tr class="expense-row transition hover:bg-slate-50" data-search="office supplies abc stationery"
-                            data-category="office supplies" data-date="2026-11-03">
-
-                            <td class="px-6 py-5">
-                                <div class="flex items-center gap-3">
-
-
-                                    <div>
-                                        <p class="font-bold text-slate-800">
-                                            Office Supplies
-                                        </p>
-                                        <p class="mt-1 text-xs text-slate-400">
-                                            ABC Stationery Shop
-                                        </p>
-                                    </div>
-
-                                </div>
-                            </td>
-
-                            <td class="px-6 py-5">
-                                <span class="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600">
-                                    Office Supplies
-                                </span>
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                03 Nov 2026
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Cash
-                            </td>
-
-                            <td class="px-6 py-5 font-bold text-slate-800">
-                                ৳ 2,500
-                            </td>
-
-                            <td class="px-6 py-5">
-
-                                <div class="flex items-center justify-center gap-2">
-
-                                    {{-- View Button --}}
-                                    <button type="button" onclick="alert('View details will be available later.')"
-                                        class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-600 transition-all duration-200 hover:border-blue-200 hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-500/20 active:scale-95">
-                                        View
-                                    </button>
-
-                                    {{-- Edit Button --}}
-                                    <button type="button" onclick="alert('Edit functionality will be available later.')"
-                                        class="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-600 transition-all duration-200 hover:border-amber-200 hover:bg-amber-500 hover:text-white hover:shadow-md hover:shadow-amber-500/20 active:scale-95">
-                                        Edit
-                                    </button>
-
-                                    {{-- Delete Button --}}
-                                    <button type="button"
-                                        onclick="alert('Delete functionality will be available later.')"
-                                        class="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition-all duration-200 hover:border-red-200 hover:bg-red-500 hover:text-white hover:shadow-md hover:shadow-red-500/20 active:scale-95">
-                                        Delete
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-
-                        {{-- Expense 2 --}}
-                        <tr class="expense-row transition hover:bg-slate-50"
-                            data-search="internet bill broadband provider" data-category="internet & hosting"
-                            data-date="2026-11-02">
-
-                            <td class="px-6 py-5">
-                                <div class="flex items-center gap-3">
-
-
-
-                                    <div>
-                                        <p class="font-bold text-slate-800">
-                                            Internet Bill
-                                        </p>
-                                        <p class="mt-1 text-xs text-slate-400">
-                                            Broadband Provider
-                                        </p>
-                                    </div>
-
-                                </div>
-                            </td>
-
-                            <td class="px-6 py-5">
-                                <span class="rounded-lg bg-purple-50 px-3 py-1.5 text-xs font-semibold text-purple-600">
-                                    Internet & Hosting
-                                </span>
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                02 Nov 2026
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Mobile Banking
-                            </td>
-
-                            <td class="px-6 py-5 font-bold text-slate-800">
-                                ৳ 1,200
-                            </td>
-
-                            <td class="px-6 py-5">
-
-                                <div class="flex items-center justify-center gap-2">
-
-                                    {{-- View Button --}}
-                                    <button type="button" onclick="alert('View details will be available later.')"
-                                        class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-600 transition-all duration-200 hover:border-blue-200 hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-500/20 active:scale-95">
-                                        View
-                                    </button>
-
-                                    {{-- Edit Button --}}
-                                    <button type="button" onclick="alert('Edit functionality will be available later.')"
-                                        class="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-600 transition-all duration-200 hover:border-amber-200 hover:bg-amber-500 hover:text-white hover:shadow-md hover:shadow-amber-500/20 active:scale-95">
-                                        Edit
-                                    </button>
-
-                                    {{-- Delete Button --}}
-                                    <button type="button"
-                                        onclick="alert('Delete functionality will be available later.')"
-                                        class="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition-all duration-200 hover:border-red-200 hover:bg-red-500 hover:text-white hover:shadow-md hover:shadow-red-500/20 active:scale-95">
-                                        Delete
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-
-                        {{-- Expense 3 --}}
-                        <tr class="expense-row transition hover:bg-slate-50" data-search="team lunch restaurant food"
-                            data-category="food & drinks" data-date="2026-11-01">
-
-                            <td class="px-6 py-5">
-                                <div class="flex items-center gap-3">
-
-
-
-                                    <div>
-                                        <p class="font-bold text-slate-800">
-                                            Team Lunch
-                                        </p>
-                                        <p class="mt-1 text-xs text-slate-400">
-                                            Local Restaurant
-                                        </p>
-                                    </div>
-
-                                </div>
-                            </td>
-
-                            <td class="px-6 py-5">
-                                <span class="rounded-lg bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600">
-                                    Food & Drinks
-                                </span>
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                01 Nov 2026
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Cash
-                            </td>
-
-                            <td class="px-6 py-5 font-bold text-slate-800">
-                                ৳ 3,500
-                            </td>
-
-                            <td class="px-6 py-5">
-
-                                <div class="flex items-center justify-center gap-2">
-
-                                    {{-- View Button --}}
-                                    <button type="button" onclick="alert('View details will be available later.')"
-                                        class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-600 transition-all duration-200 hover:border-blue-200 hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-500/20 active:scale-95">
-                                        View
-                                    </button>
-
-                                    {{-- Edit Button --}}
-                                    <button type="button" onclick="alert('Edit functionality will be available later.')"
-                                        class="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-600 transition-all duration-200 hover:border-amber-200 hover:bg-amber-500 hover:text-white hover:shadow-md hover:shadow-amber-500/20 active:scale-95">
-                                        Edit
-                                    </button>
-
-                                    {{-- Delete Button --}}
-                                    <button type="button"
-                                        onclick="alert('Delete functionality will be available later.')"
-                                        class="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition-all duration-200 hover:border-red-200 hover:bg-red-500 hover:text-white hover:shadow-md hover:shadow-red-500/20 active:scale-95">
-                                        Delete
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-
-                        {{-- Expense 4 --}}
-                        <tr class="expense-row transition hover:bg-slate-50" data-search="office electricity utility bill"
-                            data-category="utilities" data-date="2026-10-29">
-
-                            <td class="px-6 py-5">
-                                <div class="flex items-center gap-3">
-
-
-
-                                    <div>
-                                        <p class="font-bold text-slate-800">
-                                            Electricity Bill
-                                        </p>
-                                        <p class="mt-1 text-xs text-slate-400">
-                                            Office Utility
-                                        </p>
-                                    </div>
-
-                                </div>
-                            </td>
-
-                            <td class="px-6 py-5">
-                                <span class="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-600">
-                                    Utilities
-                                </span>
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                29 Oct 2026
-                            </td>
-
-                            <td class="px-6 py-5 text-slate-600">
-                                Bank Transfer
-                            </td>
-
-                            <td class="px-6 py-5 font-bold text-slate-800">
-                                ৳ 4,800
-                            </td>
-
-                            <td class="px-6 py-5">
-
-                                <div class="flex items-center justify-center gap-2">
-
-                                    {{-- View Button --}}
-                                    <button type="button" onclick="alert('View details will be available later.')"
-                                        class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-600 transition-all duration-200 hover:border-blue-200 hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-500/20 active:scale-95">
-                                        View
-                                    </button>
-
-                                    {{-- Edit Button --}}
-                                    <button type="button" onclick="alert('Edit functionality will be available later.')"
-                                        class="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-600 transition-all duration-200 hover:border-amber-200 hover:bg-amber-500 hover:text-white hover:shadow-md hover:shadow-amber-500/20 active:scale-95">
-                                        Edit
-                                    </button>
-
-                                    {{-- Delete Button --}}
-                                    <button type="button"
-                                        onclick="alert('Delete functionality will be available later.')"
-                                        class="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition-all duration-200 hover:border-red-200 hover:bg-red-500 hover:text-white hover:shadow-md hover:shadow-red-500/20 active:scale-95">
-                                        Delete
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-
-                        {{-- No Results --}}
-                        <tr id="noResults" class="hidden">
-                            <td colspan="6" class="px-6 py-12 text-center text-sm text-slate-400">
-                                No matching expenses found.
-                            </td>
-                        </tr>
+                    <tbody id="expenseTableBody" class="divide-y divide-slate-100 text-sm dark:divide-slate-800">
+                        @forelse ($expenses as $expense)
+                            @php
+                                $searchText = strtolower(implode(' ', array_filter([
+                                    $expense->title,
+                                    $expense->merchant,
+                                    $expense->category,
+                                    $expense->payment_method,
+                                    $expense->user?->name,
+                                ])));
+                            @endphp
+                            <tr class="expense-row transition hover:bg-slate-50 dark:hover:bg-slate-800"
+                                data-search="{{ $searchText }}"
+                                data-category="{{ strtolower($expense->category) }}"
+                                data-date="{{ $expense->expense_date->toDateString() }}">
+                                <td class="px-6 py-5">
+                                    <p class="font-bold text-slate-800 dark:text-slate-100">{{ $expense->title }}</p>
+                                    <p class="mt-1 text-xs text-slate-400">{{ $expense->merchant ?: '—' }}</p>
+                                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">By: {{ $expense->user?->name ?? 'Unknown' }}</p>
+                                </td>
+                                <td class="px-6 py-5"><span class="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">{{ $expense->category }}</span></td>
+                                <td class="px-6 py-5 text-slate-600 dark:text-slate-300">{{ $expense->expense_date->format('d M Y') }}</td>
+                                <td class="px-6 py-5 text-slate-600 dark:text-slate-300">{{ $expense->payment_method ?: '—' }}</td>
+                                <td class="px-6 py-5 font-bold text-slate-800 dark:text-slate-100">৳ {{ number_format((float) $expense->amount, 2) }}</td>
+                                <td class="px-6 py-3 text-center">@include('components.admin.receipt-thumbnail')</td>
+                                <td class="px-6 py-5 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">{{ ucfirst($expense->status) }}</td>
+                            </tr>
+                        @empty
+                            <tr id="noResults"><td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">No expenses have been added yet.</td></tr>
+                        @endforelse
+                        <tr id="noFilteredResults" class="hidden"><td colspan="7"class="px-6 py-12 text-center text-sm text-slate-400">No matching expenses found.</td></tr>
 
                     </tbody>
 
@@ -567,14 +313,14 @@
 
 
             {{-- Table Footer --}}
-            <div class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 px-6 py-5 sm:flex-row">
+            <div class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 px-6 py-5 sm:flex-row dark:border-slate-800">
 
-                <p id="resultCount" class="text-xs font-medium text-slate-500">
-                    Showing 4 sample records
+                <p id="resultCount" class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                    Showing {{ $expenses->count() }} expenses
                 </p>
 
                 <span class="text-xs text-slate-400">
-                    Frontend demonstration data
+                    Saved expenses
                 </span>
 
             </div>
@@ -583,19 +329,21 @@
 
     </div>
 
+    @include('components.admin.receipt-modal')
+
 
     {{-- Frontend Search and Filter --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            const searchInput = document.getElementById('expenseSearch');
-            const categoryFilter = document.getElementById('categoryFilter');
+            const searchInput = document.getElementById('reportSearch');
+            const categoryFilter = document.getElementById('reportCategory');
 
             const startDate = document.getElementById('startDate');
             const endDate = document.getElementById('endDate');
 
             const rows = document.querySelectorAll('.expense-row');
-            const noResults = document.getElementById('noResults');
+            const noResults = document.getElementById('noFilteredResults');
             const resultCount = document.getElementById('resultCount');
 
             function filterExpenses() {
@@ -646,7 +394,7 @@
 
                 noResults.classList.toggle('hidden', visibleCount > 0);
 
-                resultCount.textContent = `Showing ${visibleCount} sample records`;
+                resultCount.textContent = `Showing ${visibleCount} expenses`;
 
             }
 

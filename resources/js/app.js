@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
             cell.textContent = day;
             cell.dataset.day = day;
 
-            let cls = 'h-9 w-full rounded-lg font-medium transition-colors ';
+            let cls = 'h-8 w-full rounded-lg text-xs font-medium transition-colors sm:h-9 sm:text-sm ';
             if (sameDay(date, selected)) {
                 cls += 'bg-blue-600 text-white';
             } else if (sameDay(date, today)) {

@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Register | DeshExpense</title>
+    <title>Register | {{ config('app.name') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('logo/logo-icon.png') }}">
 
     @vite('resources/css/app.css')
+    @include('components.theme-script')
 </head>
 
 <body class="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-8">
@@ -18,23 +20,22 @@
     <!-- Registration Card -->
     <div
         class="relative z-10 w-full max-w-md rounded-3xl border border-white/20
-        bg-white/95 p-8 shadow-2xl backdrop-blur-xl">
+        bg-white/95 p-8 shadow-2xl backdrop-blur-xl dark:border-slate-700 dark:bg-slate-900/95">
 
         <!-- Brand -->
         <div class="mb-7 text-center">
 
-            <div
-                class="mx-auto mb-4 flex h-14 w-14 items-center justify-center
-                rounded-2xl bg-blue-600 text-2xl font-bold text-white">
-                D
-            </div>
+            <img src="{{ asset('logo/logo-transparent.png') }}" alt="{{ config('app.name') }} logo"
+                class="mx-auto mb-5 h-20 w-auto max-w-full object-contain dark:hidden">
+            <img src="{{ asset('logo/logo-light.png') }}" alt="{{ config('app.name') }} logo"
+                class="mx-auto mb-5 hidden h-20 w-auto max-w-full object-contain dark:block">
 
-            <h1 class="text-3xl font-bold text-slate-900">
+            <h1 class="text-3xl font-bold text-slate-900 dark:text-white">
                 Create Account
             </h1>
 
-            <p class="mt-2 text-sm text-slate-500">
-                Start managing your expenses with DeshExpense.
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                Start managing your expenses with {{ config('app.name') }}.
             </p>
 
         </div>
@@ -42,7 +43,7 @@
 
         <!-- Validation Errors -->
         @if ($errors->any())
-            <div class="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            <div class="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">
 
                 @foreach ($errors->all() as $error)
                     <p class="mb-1">{{ $error }}</p>
@@ -61,14 +62,14 @@
             <!-- Name -->
             <div class="mb-4">
 
-                <label class="mb-2 block text-sm font-semibold text-slate-700">
+                <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">
                     Full Name
                 </label>
 
                 <input type="text" name="name" value="{{ old('name') }}" placeholder="Enter your full name"
                     required autocomplete="name"
                     class="w-full rounded-xl border border-slate-200 px-4 py-3
-                    outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+                    outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:focus:ring-blue-500/20">
 
             </div>
 
@@ -76,14 +77,14 @@
             <!-- Email -->
             <div class="mb-4">
 
-                <label class="mb-2 block text-sm font-semibold text-slate-700">
+                <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">
                     Email Address
                 </label>
 
                 <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter your email address"
                     required autocomplete="email"
                     class="w-full rounded-xl border border-slate-200 px-4 py-3
-    outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+    outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:focus:ring-blue-500/20">
 
             </div>
 
@@ -92,7 +93,7 @@
             <!-- Password -->
             <div class="mb-4">
 
-                <label class="mb-2 block text-sm font-semibold text-slate-700">
+                <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">
                     Password
                 </label>
 
@@ -100,10 +101,10 @@
                     <input type="password" id="password" name="password"
                         placeholder="Minimum 8 characters (letters and number)" required autocomplete="new-password"
                         class="w-full rounded-xl border border-slate-200 px-4 py-3 pr-12
-            outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+            outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:focus:ring-blue-500/20">
 
                     <button type="button" onclick="togglePassword('password', 'passwordEye')"
-                        class="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-blue-600 transition"
+                        class="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-blue-600 transition dark:hover:text-blue-400"
                         aria-label="Show password">
                         <svg id="passwordEye" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -122,7 +123,7 @@
             <!-- Confirm Password -->
             <div class="mb-6">
 
-                <label class="mb-2 block text-sm font-semibold text-slate-700">
+                <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">
                     Confirm Password
                 </label>
 
@@ -130,10 +131,10 @@
                     <input type="password" id="password_confirmation" name="password_confirmation"
                         placeholder="Confirm your password" required autocomplete="new-password"
                         class="w-full rounded-xl border border-slate-200 px-4 py-3 pr-12
-            outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+            outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:focus:ring-blue-500/20">
 
                     <button type="button" onclick="togglePassword('password_confirmation', 'confirmPasswordEye')"
-                        class="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-blue-600 transition"
+                        class="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-blue-600 transition dark:hover:text-blue-400"
                         aria-label="Show confirm password">
                         <svg id="confirmPasswordEye" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -198,11 +199,11 @@
 
 
         <!-- Login Link -->
-        <p class="mt-7 text-center text-sm text-slate-500">
+        <p class="mt-7 text-center text-sm text-slate-500 dark:text-slate-400">
 
             Already have an account?
 
-            <a href="{{ route('login') }}" class="font-bold text-blue-600 hover:underline">
+            <a href="{{ route('login') }}" class="font-bold text-blue-600 hover:underline dark:text-blue-400">
                 Login Now
             </a>
 

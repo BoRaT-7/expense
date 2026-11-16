@@ -1,0 +1,121 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Expense;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
+
+class ExpenseController extends Controller
+{
+    public function create(): View
+    {
+        return view('expenses.create-expenses', [
+            'categories' => $this->categoryNames(),
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'category' => ['required', 'string', Rule::exists('categories', 'name')],
+            'amount' => ['required', 'numeric', 'gt:0', 'max:9999999999'],
+            'date' => ['required', 'date'],
+            'payment_method' => ['nullable', Rule::in(['Cash', 'Bank Transfer', 'Credit Card', 'Debit Card', 'Mobile Banking'])],
+            'merchant' => ['nullable', 'string', 'max:255'],
+            'notes' => ['nullable', 'string', 'max:5000'],
+            'receipt' => ['nullable', 'file', 'mimes:png,jpg,jpeg,pdf', 'max:5120'],
+        ]);
+
+        $receiptPath = $request->file('receipt')?->store('expense-receipts', 'public');
+
+        Expense::create([
+            'user_id' => $request->user()->id,
+            'title' => $validated['title'],
+            'category' => $validated['category'],
+            'amount' => $validated['amount'],
+            'expense_date' => $validated['date'],
+            'payment_method' => $validated['payment_method'] ?? null,
+            'merchant' => $validated['merchant'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+            'receipt_path' => $receiptPath,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('admin.expenses.index')->with('success', 'Expense added and submitted for approval.');
+    }
+
+    public function edit(Request $request, int $expense): View
+    {
+        $expense = Expense::where('user_id', $request->user()->id)->findOrFail($expense);
+
+        return view('expenses.create-expenses', [
+            'expense' => $expense,
+            'categories' => $this->categoryNames(),
+        ]);
+    }
+
+    public function update(Request $request, int $expense): RedirectResponse
+    {
+        $expense = Expense::where('user_id', $request->user()->id)->findOrFail($expense);
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'category' => ['required', 'string', Rule::exists('categories', 'name')],
+            'amount' => ['required', 'numeric', 'gt:0', 'max:9999999999'],
+            'date' => ['required', 'date'],
+            'payment_method' => ['nullable', Rule::in(['Cash', 'Bank Transfer', 'Credit Card', 'Debit Card', 'Mobile Banking'])],
+            'merchant' => ['nullable', 'string', 'max:255'],
+            'notes' => ['nullable', 'string', 'max:5000'],
+            'receipt' => ['nullable', 'file', 'mimes:png,jpg,jpeg,pdf', 'max:5120'],
+        ]);
+
+        $receiptPath = $expense->receipt_path;
+        if ($request->hasFile('receipt')) {
+            if ($receiptPath) {
+                Storage::disk('public')->delete($receiptPath);
+            }
+            $receiptPath = $request->file('receipt')->store('expense-receipts', 'public');
+        }
+
+        $expense->update([
+            'title' => $validated['title'],
+            'category' => $validated['category'],
+            'amount' => $validated['amount'],
+            'expense_date' => $validated['date'],
+            'payment_method' => $validated['payment_method'] ?? null,
+            'merchant' => $validated['merchant'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+            'receipt_path' => $receiptPath,
+        ]);
+
+        return redirect()->route('admin.expenses.index')->with('success', 'Expense updated successfully.');
+    }
+
+    public function destroy(Request $request, int $expense): RedirectResponse
+    {
+        $expense = Expense::where('user_id', $request->user()->id)->findOrFail($expense);
+        if ($expense->receipt_path) {
+            Storage::disk('public')->delete($expense->receipt_path);
+        }
+        $expense->delete();
+
+        return redirect()->route('admin.expenses.index')->with('success', 'Expense deleted successfully.');
+    }
+
+    /**
+     * Category names offered in the expense form.
+     *
+     * @return Collection<int, string>
+     */
+    private function categoryNames(): Collection
+    {
+        return Category::orderBy('name')->pluck('name');
+    }
+}

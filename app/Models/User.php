@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -42,7 +44,38 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'notifications_read_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
+    }
+
+    /**
+     * The user's first name, used for short, friendly greetings.
+     */
+    public function firstName(): string
+    {
+        return Str::before(trim($this->name), ' ') ?: $this->name;
+    }
+
+    /**
+     * Determine whether the given expense was added after the user last read notifications.
+     */
+    public function hasUnreadNotificationFor(Expense $expense): bool
+    {
+        return $this->notifications_read_at === null
+            || $expense->created_at->greaterThan($this->notifications_read_at);
+    }
+
+    /**
+     * Mark every expense notification up to now as read.
+     */
+    public function markNotificationsAsRead(): void
+    {
+        $this->forceFill(['notifications_read_at' => now()])->save();
     }
 }
