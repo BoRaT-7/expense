@@ -254,7 +254,7 @@
 
                 {{-- Apply Filters --}}
                 <button type="button" onclick="applyReportFilters()"
-                    class="h-[46px] rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition duration-200 hover:bg-blue-600 hover:shadow-md hover:shadow-blue-500/20 active:scale-95 dark:bg-slate-700">
+                    class="h-[46px] rounded-xl border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 shadow-sm transition duration-200 hover:border-blue-600 hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-600/20 active:scale-95 dark:border-slate-600 dark:bg-slate-900 dark:text-blue-300 dark:hover:border-blue-500 dark:hover:bg-blue-600 dark:hover:text-white">
                     Apply Filters
                 </button>
 

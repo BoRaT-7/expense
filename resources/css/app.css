@@ -8,9 +8,11 @@
 /* Header & dropdown motion */
 @theme {
     /* Brand surfaces */
-    --color-page: #f3f6ff;
-    --color-sidebar: #14213d;
-    --color-sidebar-deep: #0e1830;
+    --color-page: #f4f7fb;
+    --color-sidebar: #172b4d;
+    --color-sidebar-deep: #10213d;
+    --color-brand: #2563eb;
+    --color-brand-strong: #1d4ed8;
 
     --animate-header-title-in: header-title-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
     --animate-dropdown-in: dropdown-in 180ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -18,7 +20,7 @@
     --animate-nav-item-in: nav-item-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
     --animate-float: float 3.5s ease-in-out infinite;
     --animate-bell-ring: bell-ring 900ms ease-in-out;
-
+    --animate-popup-in: popup-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
     @keyframes nav-item-in {
         from {
             opacity: 0;
@@ -84,6 +86,17 @@
         }
     }
 
+    @keyframes popup-in {
+        from {
+            opacity: 0;
+            transform: translateY(12px) scale(0.92);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
     @keyframes gradient-pan {
         0%, 100% {
             background-position: 0% 50%;
@@ -95,10 +108,17 @@
 }
 html {
     scroll-behavior: smooth;
+    background-color: var(--color-page);
 }
 
 body {
     margin: 0;
+    transition: background-color 220ms ease, color 220ms ease;
+}
+
+::selection {
+    background: rgb(37 99 235 / 18%);
+    color: #172b4d;
 }
 
 /* Native controls (date pickers, selects, scrollbars) follow the theme */
@@ -123,52 +143,41 @@ button, a {
 
     /* Sidebar navigation link */
     .sidebar-link {
-        @apply relative flex items-center gap-3.5 rounded-xl px-4 py-3 text-sm font-medium text-slate-300
-               transition-colors duration-200 hover:bg-white/[0.06] hover:text-white
-               lg:rounded-l-full lg:rounded-r-none;
+        @apply relative flex min-h-11 items-center gap-3 rounded-xl border border-transparent px-3.5 py-2.5
+               text-[13px] font-medium tracking-[0.01em] text-slate-300/90
+               transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out
+               hover:translate-x-0.5 hover:border-white/[0.08] hover:bg-white/[0.07] hover:text-white
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/70 focus-visible:ring-offset-2
+               focus-visible:ring-offset-sidebar lg:mr-3 lg:rounded-xl;
     }
 
-    /* Active link: takes the page colour so it flows into the content area */
+    .sidebar-link svg {
+        @apply h-[18px] w-[18px] text-slate-400 transition-colors duration-200;
+    }
+
+    .sidebar-link:hover svg {
+        @apply text-blue-200;
+    }
+
+    /* The current page gets a clear, restrained brand accent. */
     .sidebar-link-active {
-        --tab-bg: var(--color-page);
-        @apply bg-page font-semibold text-blue-600 shadow-sm hover:bg-page hover:text-blue-600
-               lg:shadow-none
-               dark:bg-slate-950 dark:text-blue-400 dark:hover:bg-slate-950 dark:hover:text-blue-400;
+        @apply border-blue-300/15 bg-blue-300/15 font-semibold text-white shadow-sm shadow-slate-950/10
+               hover:translate-x-0 hover:border-blue-200/20 hover:bg-blue-300/20 hover:text-white;
     }
 
-    .dark .sidebar-link-active {
-        --tab-bg: var(--color-slate-950);
+    .sidebar-link-active svg,
+    .sidebar-link-active:hover svg {
+        @apply text-blue-200;
     }
 
-    /* Curved "connected tab" corners above and below the active link (desktop only) */
-    @media (width >= 64rem) {
-        .sidebar-link-active::before,
-        .sidebar-link-active::after {
-            content: "";
-            position: absolute;
-            right: 0;
-            width: 20px;
-            height: 20px;
-            pointer-events: none;
-        }
-
-        .sidebar-link-active::before {
-            top: -20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 6px 6px 0 6px var(--tab-bg);
-        }
-
-        .sidebar-link-active::after {
-            bottom: -20px;
-            border-top-right-radius: 20px;
-            box-shadow: 6px -6px 0 6px var(--tab-bg);
-        }
+    .sidebar-link-active::before {
+        @apply absolute inset-y-2 left-0 w-[3px] rounded-full bg-sky-300 content-[''];
     }
 }
 
 @layer components {
     .dashboard-card {
-        @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm
+        @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-[border-color,box-shadow,background-color] duration-200
                dark:border-slate-700 dark:bg-slate-900;
     }
 }

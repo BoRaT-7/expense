@@ -53,7 +53,7 @@ class CategoryTest extends TestCase
 
     public function test_renaming_a_category_updates_its_expenses(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->superAdmin()->create();
         $category = Category::factory()->create(['name' => 'Snacks']);
         $expense = Expense::factory()->create(['category' => 'Snacks']);
 
@@ -67,7 +67,7 @@ class CategoryTest extends TestCase
 
     public function test_unused_category_can_be_deleted(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->superAdmin()->create();
         $category = Category::factory()->create();
 
         $this->actingAs($user)
@@ -79,7 +79,7 @@ class CategoryTest extends TestCase
 
     public function test_category_used_by_expenses_cannot_be_deleted(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->superAdmin()->create();
         $category = Category::factory()->create(['name' => 'Rent Plus']);
         Expense::factory()->create(['category' => 'Rent Plus']);
 
@@ -104,5 +104,45 @@ class CategoryTest extends TestCase
             ->assertSessionHasErrors('category');
 
         $this->assertDatabaseCount('expenses', 0);
+    }
+
+    public function test_regular_users_do_not_see_category_action_buttons(): void
+    {
+        $category = Category::factory()->create(['name' => 'Stationery Plus']);
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('admin.categories.index'))
+            ->assertOk()
+            ->assertSee('Stationery Plus')
+            ->assertDontSee(route('admin.categories.update', $category))
+            ->assertDontSee(route('admin.categories.destroy', $category))
+            ->assertSee('Only the super admin can edit or delete categories.');
+    }
+
+    public function test_super_admin_sees_category_action_buttons(): void
+    {
+        $category = Category::factory()->create(['name' => 'Stationery Plus']);
+
+        $this->actingAs(User::factory()->superAdmin()->create())
+            ->get(route('admin.categories.index'))
+            ->assertOk()
+            ->assertSee(route('admin.categories.update', $category))
+            ->assertSee(route('admin.categories.destroy', $category));
+    }
+
+    public function test_regular_users_cannot_edit_or_delete_categories(): void
+    {
+        $user = User::factory()->create();
+        $category = Category::factory()->create(['name' => 'Keep Me']);
+
+        $this->actingAs($user)
+            ->put(route('admin.categories.update', $category), ['name' => 'Hijacked'])
+            ->assertForbidden();
+
+        $this->actingAs($user)
+            ->delete(route('admin.categories.destroy', $category))
+            ->assertForbidden();
+
+        $this->assertSame('Keep Me', $category->fresh()->name);
     }
 }

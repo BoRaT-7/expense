@@ -8,6 +8,7 @@ use App\Models\Expense;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -41,6 +42,8 @@ class CategoryController extends Controller
 
     public function update(Request $request, Category $category): RedirectResponse
     {
+        Gate::authorize('update', $category);
+
         $validated = $request->validateWithBag('category', $this->rules($category));
         $previousName = $category->name;
 
@@ -59,6 +62,8 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
+        Gate::authorize('delete', $category);
+
         $expenseCount = $category->expenses()->count();
 
         if ($expenseCount > 0) {

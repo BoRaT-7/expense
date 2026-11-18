@@ -12,6 +12,7 @@
         'bg-cyan-50 text-cyan-600 ring-cyan-100 dark:bg-cyan-500/10 dark:text-cyan-400 dark:ring-cyan-500/20',
     ];
     $categoryErrors = $errors->getBag('category');
+    $canManageCategories = auth()->user()->isSuperAdmin();
     $editingCategoryId = old('category_id');
     $field = 'w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100';
 @endphp
@@ -95,7 +96,9 @@
 
             <div>
                 <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">All Categories</h2>
-                <p class="mt-1 text-xs text-slate-400">Rename a category and its existing expenses update too.</p>
+                <p class="mt-1 text-xs text-slate-400">
+                    {{ $canManageCategories ? 'Rename a category and its existing expenses update too.' : 'Only the super admin can edit or delete categories.' }}
+                </p>
             </div>
 
             <div class="relative w-full sm:max-w-sm">
@@ -121,7 +124,9 @@
                                 <th class="px-5 py-4 text-right">Total Amount</th>
                                 <th class="w-44 px-5 py-4">Share</th>
                                 <th class="px-5 py-4">Created</th>
-                                <th class="px-5 py-4 text-center">Actions</th>
+                                @if ($canManageCategories)
+                                    <th class="px-5 py-4 text-center">Actions</th>
+                                @endif
                             </tr>
                         </thead>
 
@@ -176,6 +181,7 @@
 
                                     <td class="whitespace-nowrap px-5 py-4 text-xs text-slate-500 dark:text-slate-400">{{ $category->created_at?->format('d M Y') }}</td>
 
+                                    @if ($canManageCategories)
                                     <td class="px-5 py-4">
                                         <div class="flex items-center justify-center gap-2">
                                             <button type="button"
@@ -203,6 +209,7 @@
                                             @endif
                                         </div>
                                     </td>
+                                    @endif
 
                                 </tr>
                             @endforeach
@@ -213,7 +220,7 @@
                                 <td class="px-5 py-4" colspan="3">Total ({{ $categories->count() }} {{ Str::plural('category', $categories->count()) }})</td>
                                 <td class="px-5 py-4 text-center tabular-nums">{{ $categories->sum('expenses_count') }}</td>
                                 <td class="whitespace-nowrap px-5 py-4 text-right tabular-nums">৳ {{ number_format($totalExpenseAmount, 2) }}</td>
-                                <td class="px-5 py-4" colspan="3"></td>
+                                <td class="px-5 py-4" colspan="{{ $canManageCategories ? 3 : 2 }}"></td>
                             </tr>
                         </tfoot>
 

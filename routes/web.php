@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Models\Expense;
 use Illuminate\Support\Facades\Route;
@@ -25,13 +26,7 @@ Route::middleware('guest')->group(function () {
         ->middleware('throttle:5,1')
         ->name('login.submit');
 
-    // Registration
-    Route::get('/register', [AuthController::class, 'showRegister'])
-        ->name('register');
-
-    Route::post('/register', [AuthController::class, 'register'])
-        ->middleware('throttle:3,1')
-        ->name('register.submit');
+    // Public registration is disabled: accounts are created by the super admin.
 });
 
 // Authenticated Routes
@@ -85,6 +80,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
             Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
             Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+            // User Accounts (super admin only)
+            Route::middleware('super-admin')->group(function () {
+                Route::get('/users', [UserController::class, 'index'])->name('users.index');
+                Route::post('/users', [UserController::class, 'store'])->name('users.store');
+                Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+                Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+            });
 
             // Reports (shared: based on all users' expenses)
             Route::get('/reports', function () {

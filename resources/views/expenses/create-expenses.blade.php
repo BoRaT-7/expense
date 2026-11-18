@@ -25,6 +25,11 @@
 
                 <h1 class="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl dark:text-white">{{ isset($expense) ? 'Edit Expense' : 'Add New Expense' }}</h1>
                 <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">Record and organize your business expenses in one place.</p>
+                @if (isset($expense) && $expense->user_id !== auth()->id())
+                    <p class="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-violet-50 px-3 py-1.5 text-xs font-semibold text-violet-700 dark:bg-violet-500/10 dark:text-violet-300">
+                        Editing as super admin · Expense by {{ $expense->user?->name ?? 'Unknown' }}
+                    </p>
+                @endif
             </div>
 
             <a href="{{ route('admin.dashboard') }}"
@@ -37,17 +42,16 @@
         </div>
 
         {{-- Single Form Card --}}
-        @if (session('success'))
-            <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">{{ session('success') }}</div>
-        @endif
-
         @if ($errors->any())
             <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">Please correct the highlighted expense details.</div>
         @endif
 
         <form id="expenseForm" action="{{ isset($expense) ? route('admin.expenses.update', $expense->id) : route('admin.expenses.store') }}" method="POST" enctype="multipart/form-data" class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
             @csrf
-            @if (isset($expense)) @method('PUT') @endif
+            @if (isset($expense))
+                @method('PUT')
+                <input type="hidden" name="from" value="{{ ($returnTo ?? '') === 'admin.expenses.all' ? 'all' : 'mine' }}">
+            @endif
 
             {{-- Card Header --}}
             <header class="flex items-center gap-3 border-b border-slate-100 px-6 py-5 dark:border-slate-800">

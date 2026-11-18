@@ -17,7 +17,7 @@
     @include('components.theme-script')
 </head>
 
-<body class="min-h-screen bg-page font-sans text-[#111a35] antialiased
+<body class="min-h-screen bg-page font-sans text-slate-800 antialiased
              transition-colors duration-300
              dark:bg-slate-950 dark:text-slate-100">
 
@@ -43,6 +43,8 @@
 
         </div>
     </div>
+
+    @include('components.admin.success-popup')
 
     @stack('scripts')
 

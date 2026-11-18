@@ -46,7 +46,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'notifications_read_at' => 'datetime',
             'password' => 'hashed',
+            'is_super_admin' => 'boolean',
         ];
+    }
+
+    /**
+     * Determine whether the user is the super admin who manages user accounts.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return (bool) $this->is_super_admin;
     }
 
     public function expenses(): HasMany

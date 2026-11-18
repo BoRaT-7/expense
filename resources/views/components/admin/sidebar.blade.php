@@ -13,13 +13,22 @@
             ],
         ],
     ];
+
+    if (auth()->user()?->isSuperAdmin()) {
+        $menus[] = [
+            'section' => 'ADMINISTRATION',
+            'items' => [
+                ['name' => 'Users', 'route' => 'admin.users.index', 'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z'],
+            ],
+        ];
+    }
 @endphp
 
 <aside id="admin-sidebar"
-    class="fixed inset-y-0 left-0 z-50 flex w-[250px] -translate-x-full flex-col bg-gradient-to-b from-sidebar to-sidebar-deep text-white shadow-2xl shadow-slate-950/30 transition-transform duration-300 lg:static lg:translate-x-0 lg:shadow-none dark:from-slate-900 dark:to-slate-900">
+    class="fixed inset-y-0 left-0 z-50 flex w-[250px] -translate-x-full flex-col border-r border-white/[0.06] bg-gradient-to-b from-sidebar via-[#152846] to-sidebar-deep text-white shadow-2xl shadow-slate-950/25 transition-transform duration-300 lg:static lg:translate-x-0 lg:shadow-none dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
 
     <!-- Brand Header -->
-    <div class="relative flex h-16 shrink-0 items-center justify-center border-b border-white/10 px-5 md:h-[82px] lg:justify-start">
+    <div class="relative flex h-16 shrink-0 items-center justify-center border-b border-white/[0.08] px-5 md:h-[82px] lg:justify-start">
 
         <!-- Brand Logo: Mobile Center / Desktop Left -->
         <a href="{{ route('admin.dashboard') }}" aria-label="{{ config('app.name') }} dashboard"
@@ -41,16 +50,16 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 space-y-7 overflow-y-auto px-3 py-6 lg:pl-4 lg:pr-0">
+    <nav class="flex-1 space-y-7 overflow-y-auto px-4 py-6">
 
         @foreach ($menus as $menu)
             <div>
 
-                <p class="mb-3 px-4 text-[10px] font-bold tracking-[2px] text-slate-400/70">
+                <p class="mb-3 px-3.5 text-[10px] font-semibold tracking-[0.16em] text-slate-400/75">
                     {{ $menu['section'] }}
                 </p>
 
-                <div class="space-y-1.5">
+                <div class="space-y-1">
 
                     @foreach ($menu['items'] as $item)
                         @php
@@ -78,11 +87,11 @@
         <!-- Quick Actions: Small devices only (shown in the header on larger screens) -->
         <div class="md:hidden">
 
-            <p class="mb-3 px-4 text-[10px] font-bold tracking-[2px] text-slate-400/70">
+            <p class="mb-3 px-3.5 text-[10px] font-semibold tracking-[0.16em] text-slate-400/75">
                 QUICK ACTIONS
             </p>
 
-            <div class="space-y-1.5">
+            <div class="space-y-1">
 
                 <!-- Notifications -->
                 <a href="{{ route('admin.notifications.index') }}"

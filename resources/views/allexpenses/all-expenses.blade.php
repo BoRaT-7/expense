@@ -240,7 +240,7 @@
 
                     {{-- Apply Filters --}}
                     <button type="button" onclick="applyReportFilters()"
-                        class="h-[46px] rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition duration-200 hover:bg-blue-600 hover:shadow-md hover:shadow-blue-500/20 active:scale-95 dark:bg-slate-700">
+                        class="h-[46px] rounded-xl border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 shadow-sm transition duration-200 hover:border-blue-600 hover:bg-blue-600 hover:text-white hover:shadow-md hover:shadow-blue-600/20 active:scale-95 dark:border-slate-600 dark:bg-slate-900 dark:text-blue-300 dark:hover:border-blue-500 dark:hover:bg-blue-600 dark:hover:text-white">
                         Apply Filters
                     </button>
 
@@ -298,7 +298,7 @@
                                 <td class="px-6 py-5 text-slate-600 dark:text-slate-300">{{ $expense->payment_method ?: '—' }}</td>
                                 <td class="px-6 py-5 font-bold text-slate-800 dark:text-slate-100">৳ {{ number_format((float) $expense->amount, 2) }}</td>
                                 <td class="px-6 py-3 text-center">@include('components.admin.receipt-thumbnail')</td>
-                                <td class="px-6 py-5 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">{{ ucfirst($expense->status) }}</td>
+                                <td class="px-6 py-5">@include('components.admin.expense-actions', ['from' => 'all'])</td>
                             </tr>
                         @empty
                             <tr id="noResults"><td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">No expenses have been added yet.</td></tr>

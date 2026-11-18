@@ -15,7 +15,7 @@
 <body class="flex min-h-screen items-center justify-center bg-slate-950 px-4">
 
     <!-- Background -->
-    <div class="fixed inset-0 bg-gradient-to-br from-blue-950 via-slate-900 to-violet-950"></div>
+    <div class="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900 via-slate-950 to-[#101d35]"></div>
 
     <!-- Login Card -->
     <div class="relative z-10 w-full max-w-md rounded-3xl border border-white/20
@@ -130,16 +130,9 @@
         </form>
 
 
-        <!-- Register Link -->
+        <!-- Account Notice -->
         <p class="mt-7 text-center text-sm text-slate-500 dark:text-slate-400">
-
-            Don't have an account?
-
-            <a href="{{ route('register') }}"
-                class="font-bold text-blue-600 hover:underline dark:text-blue-400">
-                Create Account
-            </a>
-
+            Don't have an account? Please contact the super admin to get your login details.
         </p>
 
     </div>
